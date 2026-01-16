@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from models import Product
+from typing import List
 
 app = FastAPI()
 
@@ -34,3 +35,11 @@ def get_product_by_id(id: int):
 def add_new_product(nw_pdt : Product):
     products.append(nw_pdt)
     return nw_pdt
+
+@app.post("/addMoreProducts")
+def add_more_products(nw_pdt : List[Product]):
+    products.extend(nw_pdt)
+    return {
+        "message": f"Successfully added {len(nw_pdt)} product(s)",
+        "added": nw_pdt
+    }
