@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from models import Product
+from models import Product, ProductUpdate
 from typing import List
 
 app = FastAPI()
@@ -43,3 +43,27 @@ def add_more_products(nw_pdt : List[Product]):
         "message": f"Successfully added {len(nw_pdt)} product(s)",
         "added": nw_pdt
     }
+
+@app.put("/product/{id}")
+def update_product(id: int, pdt: Product):
+    if pdt.id != id:
+        return {"error": "ID in URL and body must match"}
+
+    for index, prod in enumerate(products):
+        if prod.id == id:
+            products[index] = pdt
+            return pdt
+
+    return {"error": "Product not found"}
+
+
+@app.patch("/update/{id}")
+def update_products(id: int, pdt: ProductUpdate):
+    for prod in products:
+        if prod.id == id:
+            updates = pdt.model_dump(exclude_unset=True)
+            for key, value in updates.items():
+                setattr(prod, key, value)
+            return prod
+    
+    return {"error": "Product not found"}
