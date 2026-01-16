@@ -29,3 +29,4 @@ This repository contains my FastAPI learning examples and practice code.
 >>uvicorn main:app --reload
 
 
+#   Pydantic is mainly used for data validation in Fastapi

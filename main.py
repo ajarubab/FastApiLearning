@@ -12,8 +12,10 @@ def aboutMe():
     return {"Message" : "This is all the abouts about me"}
 
 products = [
-    Product(1,"pen",10,15,"blue gel pen"),
-    Product(2,"pencil",5,60,"40 cm natraj pencil"),
+    Product(id = 101,name = "pen",price = 10,quantity = 100, description ="blue gel pen"),
+    Product(id = 102,name = "pencil",price = 5,quantity = 200, description ="Natraj pencil"),
+    Product(id = 103,name = "Eraser",price = 7,quantity = 200, description ="20gms eraser"),
+    Product(id = 104,name = "Sharpner",price = 8,quantity = 200, description ="quicky sharpner"),
 ]
 
 @app.get("/product")
