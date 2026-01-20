@@ -66,8 +66,12 @@ def add_new_product(nw_pdt : Product, db : Session = Depends(get_db)):
     return nw_pdt
 
 @app.post("/addMoreProducts")
-def add_more_products(nw_pdt : List[Product]):
-    products.extend(nw_pdt)
+def add_more_products(nw_pdt : List[Product],  db : Session = Depends(get_db)):
+    pdts = []
+    for pdt in nw_pdt:
+        pdts.append(dbModels.Product(**pdt.model_dump()))
+    db.add_all(pdts)
+    db.commit()
     return {
         "message": f"Successfully added {len(nw_pdt)} product(s)",
         "added": nw_pdt
