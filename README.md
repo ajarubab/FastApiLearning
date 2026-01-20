@@ -30,3 +30,9 @@ This repository contains my FastAPI learning examples and practice code.
 
 
 #   Pydantic is mainly used for data validation in Fastapi
+
+#   To work with postgreSQL we use sql alchemy (recommended)
+
+>>> pip install sqlalchemy psycopg2 
+            OR
+>>> pip install sqlalchemy psycopg2-binary

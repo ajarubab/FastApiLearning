@@ -1,8 +1,13 @@
 from fastapi import FastAPI
 from models import Product, ProductUpdate
 from typing import List
+from dbConfig import session, engine
+import dbModels
 
 app = FastAPI()
+
+# binding postgresql to vscode to create table according to dbModels via dbConfig
+dbModels.Base.metadata.create_all(bind=engine)
 
 @app.get("/")
 def greet():
@@ -19,9 +24,9 @@ products = [
     Product(id = 104,name = "Sharpner",price = 8,quantity = 200, description ="quicky sharpner"),
 ]
 
-@app.get("/product")
-def get_products():
-    return products
+@app.get("/products")
+def get_all_products():
+   pass
 
 @app.get("/product/{id}")
 def get_product_by_id(id: int):
