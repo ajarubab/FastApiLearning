@@ -60,8 +60,9 @@ def get_product_by_id(id: int, db : Session = Depends(get_db)):
     return "Product not found"
 
 @app.post("/product")
-def add_new_product(nw_pdt : Product):
-    products.append(nw_pdt)
+def add_new_product(nw_pdt : Product, db : Session = Depends(get_db)):
+    db.add(dbModels.Product(**nw_pdt.model_dump()))
+    db.commit()
     return nw_pdt
 
 @app.post("/addMoreProducts")
