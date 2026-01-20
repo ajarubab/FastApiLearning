@@ -53,11 +53,10 @@ def get_all_products(db : Session = Depends(get_db)):
     return db_pds
 
 @app.get("/product/{id}")
-def get_product_by_id(id: int):
-    for pdt in products:
-        if pdt.id == id:
-            return pdt
-    
+def get_product_by_id(id: int, db : Session = Depends(get_db)):
+    db_pdt = db.query(dbModels.Product).filter(dbModels.Product.id == id).first()
+    if db_pdt:
+        return db_pdt
     return "Product not found"
 
 @app.post("/product")
