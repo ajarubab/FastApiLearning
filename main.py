@@ -1,13 +1,23 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from models import Product, ProductUpdate
 from typing import List
 from dbConfig import session, engine
 import dbModels
+from sqlalchemy.orm import Session
 
 app = FastAPI()
 
 # binding postgresql to vscode to create table according to dbModels via dbConfig
 dbModels.Base.metadata.create_all(bind=engine)
+
+# Global method for session opening and closing
+def get_db():
+    db = session()
+    try:
+        yield db
+    finally:
+        db.close()
+
 
 @app.get("/")
 def greet():
@@ -38,8 +48,9 @@ db_init()
 
 
 @app.get("/products")
-def get_all_products():
-   pass
+def get_all_products(db : Session = Depends(get_db)):
+    db_pds = db.query(dbModels.Product).all()
+    return db_pds
 
 @app.get("/product/{id}")
 def get_product_by_id(id: int):
