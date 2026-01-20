@@ -19,10 +19,23 @@ def aboutMe():
 
 products = [
     Product(id = 101,name = "pen",price = 10,quantity = 100, description ="blue gel pen"),
-    Product(id = 102,name = "pencil",price = 5,quantity = 200, description ="Natraj pencil"),
-    Product(id = 103,name = "Eraser",price = 7,quantity = 200, description ="20gms eraser"),
+    Product(id = 102,name = "pencil",price = 5.5,quantity = 200, description ="Natraj pencil"),
+    Product(id = 103,name = "Eraser",price = 7.5,quantity = 200, description ="20gms eraser"),
     Product(id = 104,name = "Sharpner",price = 8,quantity = 200, description ="quicky sharpner"),
 ]
+
+# INITIALISING THE DATABSE TABLE PRODUCT WITH THE PYDANTIC TYPE DATA PRODUCTS CONVERTED INTO DPMODALS TYPE DATA ON 0 OBJECT(ROW) COUNT ONLY
+def db_init():
+    db = session()
+    count = db.query(dbModels.Product).count()
+
+    if count == 0:
+        for pdt in products:
+            db.add(dbModels.Product(**pdt.model_dump()))
+        db.commit()
+
+db_init()
+
 
 @app.get("/products")
 def get_all_products():
