@@ -54,6 +54,16 @@ def get_all_products(db : Session = Depends(get_db)):
 
 @app.get("/product/{id}")
 def get_product_by_id(id: int, db : Session = Depends(get_db)):
+    
+    """
+    db : Session = Depends(get_db) -> FastAPI’s dependency system runs the get_db() function 
+                                            and injects its returned Session object into db
+    db.query(dbModels.Product) -> fetch data from the Product table
+    .filter(dbModels.Product.id == id) -> Adds a WHERE clause to the SQL query so only 
+                                            the product with that specific id is selected
+    .first() -> to return the first matching row only.
+    """
+    
     db_pdt = db.query(dbModels.Product).filter(dbModels.Product.id == id).first()
     if db_pdt:
         return db_pdt
@@ -78,16 +88,27 @@ def add_more_products(nw_pdt : List[Product],  db : Session = Depends(get_db)):
     }
 
 @app.put("/product/{id}")
-def update_product(id: int, pdt: Product):
-    if pdt.id != id:
-        return {"error": "ID in URL and body must match"}
+def update_product(id: int, pdt: Product, db: Session = Depends(get_db)):
+    db_pdt = db.query(dbModels.Product).filter(dbModels.Product.id == id).first()
 
-    for index, prod in enumerate(products):
-        if prod.id == id:
-            products[index] = pdt
-            return pdt
+    if not db_pdt:
+        return {"error": "Product not found"}
 
-    return {"error": "Product not found"}
+    """
+        pdt → Pydantic model (data coming from request body)
+        model_dump() → converts Pydantic model into a dictionary
+        exclude_unset=True → only includes fields sent by user
+        .items() → gives (key, value) pairs
+        setattr() → updates the SQLAlchemy model field dynamically.
+
+    """
+    for key, value in pdt.model_dump(exclude_unset=True).items():
+        setattr(db_pdt, key, value)
+
+    db.commit()
+    db.refresh(db_pdt)
+
+    return db_pdt
 
 
 @app.patch("/update/{id}")
